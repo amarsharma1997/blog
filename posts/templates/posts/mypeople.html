@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="col-sm-6 col-sm-offset-3">
+    {% if instances %}
+        {% for obj in instances %}
+        <div class="row">
+            <div class="col-sm-6 col-md-10">
+                <div class="thumbnail">
+                    <div class="caption">
+                        <h3>{{ obj.title }}<small> {{ obj.timestamp|timesince }} ago</small></h3>
+                        {% if obj.image %}
+                            <img src="{{ obj.image.url }}" width="480" height="300">
+                        {% endif %}
+                        <p>{{ obj.content|linebreaks|truncatechars:50 }}</p>
+                        <p><a href="{% url 'posts:detail' slug=obj.slug %}" class="btn btn-primary" role="button">Read</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <h1> They don't have any post. </h1>
+    {% endif %}
+</div>
+{% endblock content %}

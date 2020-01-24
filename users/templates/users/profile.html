@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="col-sm-6 col-sm-offset-3" >
+    <p>
+        {% if image %}
+        <div class="col-sm-6 col-sm-offset-3 "><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+            <img src="{{ image }}" class="img-circle" width="200" height="200"><br>
+        </div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        {% endif %}
+
+        Name:- {{ user.first_name }} {{ user.last_name }}<br>
+        Email:- {{ user.email }}<br>
+        <a href="{% url 'users:followers' username=user.username %}" class="btn btn-primary" role="button">Followers <span class="badge"> {{ followers }}</span></a></li></a>
+        <a href="{% url 'users:following' username=user.username %}" class="btn btn-primary" role="button">Following <span class="badge"> {{ following }}</span></a></li></a>
+    </p>
+    <br>
+    <hr>
+    {% if ruser == user.username %}
+        <a href="{% url 'users:update' username=user.username %}" class="btn btn-primary" role="button">Update Profile</a>
+    {% else %}
+        {% if isfollow %}
+            <form method="POST" action="{% url 'users:unfollow' username=user.username %}">
+            {% csrf_token %}
+                <a href="{% url 'users:unfollow' username=user.username %}" class="btn btn-primary" role="button">Unfollow</a>
+            </form>
+        {% else %}
+            <form method="POST" action="{% url 'users:follow' username=user.username %}">
+            {% csrf_token %}
+                <a href="{% url 'users:follow' username=user.username %}" class="btn btn-primary" role="button">Follow</a>
+            </form>
+        {% endif %}
+    {% endif %}
+    <br>
+    <hr>
+    {% if posts %}
+        <div >
+            {% for obj in posts %}
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="thumbnail">
+                        <div class="caption">
+                            <h3>{{ obj.title }}<small> {{ obj.timestamp|timesince }} ago</small></h3>
+                            {% if obj.image %}
+                                <img src="{{ obj.image.url }}" width="480" height="300">
+                            {% endif %}
+                            <p>{{ obj.content|linebreaks|truncatechars:50 }}</p>
+                            <p><a href="{% url 'posts:detail' slug=obj.slug %}" class="btn btn-primary" role="button">Read</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+            <h1> He has not shared any thoughts or idea yet. </h1>
+        {% endif %}
+</div>
+
+{% endblock content %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="col-sm-6 col-sm-offset-3">
+    <br>
+    <h1>{{ instance.title }}</h1><small>{{ instance.timestamp }}</small><br>
+    <hr>
+    {% if instance.image %}
+        <img src="{{ instance.image.url }}" width="480" height="300">
+    <br>
+    {% endif %}
+    <br>
+    <form>{{ instance.content|safe }}<br></form>
+
+    <hr>
+    Author:- <a href="{% url 'users:profile' username=instance.user.username %}">{{instance.user.first_name}} {{instance.user.last_name}}</a>
+    <br>
+        <span class="glyphicon glyphicon-eye-open"></span> {{ views }}
+    <br>
+    <a href="{% url 'posts:like' slug=instance.slug %}" ><span class="glyphicon glyphicon-thumbs-up"><span class="badge">{{ likes }}</span></span></a>
+    <a href="{% url 'posts:dislike' slug=instance.slug %}" ><span class="glyphicon glyphicon-thumbs-down"><span class="badge">{{ dislikes }}</span></span></a>
+    <br>
+    Tags:-
+    {{ instance.topics }}
+    {% for current in topics %}
+        {{ current.topicname }},
+    {% endfor %}
+    {{ instance.user }}
+    <hr>
+    {% if master %}
+    <a href="{% url 'posts:update' slug=instance.slug %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Update</a>
+    <a href="{% url 'posts:delete' slug=instance.slug %}" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Delete</a>
+
+    <hr>
+
+    {% endif %}
+    <form method="POST" action="{% url 'posts:comment' slug=instance.slug %}">
+        {% csrf_token %}
+        <input type="text" name="comment">
+        <input type="submit" class="btn btn-primary" role="button" value="Comment"/>
+    </form>
+    <hr>
+    <h3>Comments</h3>
+    <hr>
+    {% for comment in comments %}
+        <a href="{% url 'users:profile' username=comment.user.username %}">
+            {% if comment.user == requser %}
+                You
+            {% else %}
+                {{comment.user.first_name}} {{comment.user.last_name}}
+            {% endif %}
+        </a>
+        {{ comment.timestamp|timesince }} ago
+        <br>
+        {{ comment.commentText}}
+        <br>
+        <a href="{% url 'posts:showcomment' thread=comment.id %}">Interested</a>
+        {% if comment.user == requser %}
+                <a href="{% url 'posts:commentdelete' id=comment.id %}">Delete</a>
+        {% endif %}
+        <hr>
+    {% endfor %}
+{% endblock content %}
+</div>

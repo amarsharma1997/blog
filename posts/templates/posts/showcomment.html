@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-sm-6 col-sm-offset-3">
+<h3>Replies to comment on <a href="{% url 'posts:detail' slug=instance.post.slug %}">{{ instance.post.title }}</a> </h3>
+    <hr>
+    <a href="{% url 'users:profile' username=instance.user.username %}">
+    {% if instance.user == user %}
+        You
+    {% else %}
+        {{instance.user.first_name}} {{instance.user.last_name}}
+        {% endif %}</a>
+    {{ instance.timestamp|timesince }} ago
+        <br>
+    {{ instance.commentText }}
+    <hr>
+    {% if thread %}
+        <h3> Replies </h3>
+        <hr>
+        {% for comment in thread %}
+            <a href="{% url 'users:profile' username=comment.user.username %}">
+            {% if comment.user == user %}
+                You
+            {% else %}
+                {{comment.user.first_name}} {{comment.user.last_name}}
+            {% endif %}
+            </a>
+            {{ comment.timestamp|timesince }} ago
+            <br>
+            {{ comment.commentText}}
+            <br>
+            {% if comment.user == user %}
+                <a href="{% url 'posts:replydelete' id=comment.id %}">Delete</a>
+            {% endif %}
+            <hr>
+        {% endfor %}
+    {% else %}
+        <h3> No replies </h3>
+        <hr>
+    {% endif %}
+
+    <form method="POST" action="{% url 'posts:reply' id=instance.id %}">
+        {% csrf_token %}
+        <input type="text" name="comment">
+        <input type="submit" class="btn btn-primary" role="button" value="Reply"/>
+    </form>
+</div>
+{% endblock content %}

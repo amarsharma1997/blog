@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="col-sm-6 col-sm-offset-3" >
+    {% for current in notifications %}
+    {{ current }} on
+    {% if current.post.user == user %}
+        Your
+    {% else %}
+    <a href="{% url 'users:profile' username=current.post.user.username %}">{{ current.post.user.first_name }} {{ current.post.user.last_name }}'s</a>
+    {% endif %}
+    post
+    <a href="{% url 'posts:detail' slug=current.post.slug %}">{{ current.post.title }}</a><small>  {{ current.timestamp|timesince }} ago</small>
+    <hr>
+    {% endfor %}
+</div>
+
+{% endblock content %}
